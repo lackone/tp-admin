@@ -1,0 +1,83 @@
+<script type="text/javascript">
+    function userGroupRuleTreeNodeClick(event, treeId, treeNode) {
+        var zTree = $.fn.zTree.getZTreeObj(treeId);
+        zTree.checkNode(treeNode, !treeNode.checked, true, true);
+        event.preventDefault();
+    }
+    
+    function userGroupRuleTreeNodeCheck(event, treeId, treeNode) {
+        var zTree = $.fn.zTree.getZTreeObj(treeId);
+        var nodes = zTree.getCheckedNodes(true);
+        var form = $.CurrentNavtab.find("#addUserGroupForm");
+        var ids = "";
+        for (var ix = 0; ix < nodes.length; ix++) {
+            ids += ','+ nodes[ix]["id"];
+        }
+        if (ids.length > 0) {
+            ids = ids.substr(1);
+        }
+        form.find("input[name='rules']").val(ids);
+    }
+</script>
+<style>
+    #addUserGroupForm table td.x85 {width:85px;text-align:right;}
+</style>
+<div class="bjui-pageContent">
+    <form id="addUserGroupForm" action="{:U('Admin/Auth/addUserGroup')}" data-toggle="validate" data-alertmsg="false">
+        <table class="table table-condensed table-hover" width="100%">
+            <tbody>
+                <tr>
+                    <td class="x85">
+                        <label for="name">用户组名：</label>
+                    </td>
+                    <td>
+                        <input type="text" name="name" id="name" value="" data-rule="required" size="20">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="x85">
+                        <label for="rules">权限：</label>
+                    </td>
+                    <td>
+                        <input type="hidden" name="rules" value="">
+                        <ul id="userGroupRuleTree" class="ztree" data-toggle="ztree" data-options="{expandAll:true,checkEnable:true,chkStyle:'checkbox',radioType:'all',onClick:userGroupRuleTreeNodeClick,onCheck:userGroupRuleTreeNodeCheck}">
+                            <notempty name="ruleData">
+                                <foreach name="ruleData" item="vo" key="k">
+                                    <li data-id="{$vo.id}" data-pid="{$vo.pid}">{$vo.title}</li>
+                                </foreach>
+                            </notempty>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="x85">
+                        <label for="status">状态：</label>
+                    </td>
+                    <td>
+                        <notempty name="commonStatus">
+                            <foreach name="commonStatus" item="vo" key="k">
+                                <input type="radio" name="status" data-toggle="icheck" value="{$k}" data-label="{$vo}" <if condition="$k eq 1">checked="checked"</if>>
+                                &nbsp;&nbsp;
+                            </foreach>
+                        </notempty>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="x85">
+                        <label for="sort">权限排序：</label>
+                    </td>
+                    <td>
+                        <input type="text" name="sort" id="sort" value="0" size="20">
+                        <span>(*值越小越前)</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="submit" class="btn-default" data-icon="save">添加</button></li>
+    </ul>
+</div>

@@ -1,0 +1,135 @@
+<script type="text/javascript">
+    function addCateTreeNodeClick(event, treeId, treeNode) {
+        var zTree = $.fn.zTree.getZTreeObj(treeId);
+        zTree.checkNode(treeNode, !treeNode.checked, true, true);
+        event.preventDefault();
+    }
+
+    function addCateTreeNodeCheck(event, treeId, treeNode) {
+        var form = $.CurrentNavtab.find("#addArticleForm");
+        form.find("input[name='cate_name']").val(treeNode["name"]);
+        form.find("input[name='cate_id']").val(treeNode["id"]);
+    }
+
+    function thumbUploadSuccess(file, data) {
+        var data = $.parseJSON(data);
+        $(this).bjuiajax("ajaxDone", data);
+        if (data["statusCode"] == 200) {
+            $.CurrentNavtab.find("#thumb").val(data["data"]["filename"]);
+            $.CurrentNavtab.find("#thumbImg").html("<img src='" + data["data"]["filename"] + "' width='100' />");
+        }
+    }
+</script>
+<style>
+    #addArticleForm table td.x85 {width:85px;text-align:right;}
+</style>
+<div class="bjui-pageContent">
+    <form id="addArticleForm" action="{:U('Admin/Article/addArticle')}" data-toggle="validate" data-alertmsg="false">
+        <table class="table table-condensed table-hover" width="100%">
+            <tbody>
+                <tr>
+                    <td class="x85">
+                        <label for="title" class="control-label x85">文章标题：</label>
+                    </td>
+                    <td>
+                        <input type="text" name="title" id="title" value="" data-rule="required" size="20">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="keywords" class="control-label x85">关键字：</label>
+                    </td>
+                    <td>
+                        <input type="text" name="keywords" id="keywords" value="" size="20">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="description" class="control-label x85">描述：</label>
+                    </td>
+                    <td>
+                        <textarea name="description" id="description" rows="5" cols="80"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="writer" class="control-label x85">作者：</label>
+                    </td>
+                    <td>
+                        <input type="text" name="writer" id="writer" value="" size="20">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="thumb" class="control-label x85">缩略图：</label>
+                    </td>
+                    <td>
+                        <div style="display:inline-block;vertical-align:middle;">
+                            <div data-toggle="upload" data-uploader="{:U('Admin/Article/uploadThumb')}" 
+                                 data-file-size-limit="2097152"
+                                 data-file-type-exts="*.jpg;*.jpeg;*.png;*.gif;*.mpg"
+                                 data-multi="false"
+                                 data-on-upload-success="thumbUploadSuccess"
+                                 data-icon="cloud-upload">
+                            </div>
+                            <input type="hidden" name="thumb" value="" id="thumb">
+                            <span id="thumbImg"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="pid" class="control-label x85">所属栏目：</label>
+                    </td>
+                    <td>
+                        <input type="text" name="cate_name" data-toggle="selectztree" value="" size="20" data-tree="#addCateTree" readonly>
+                        <input type="hidden" name="cate_id" value="">
+                        <ul id="addCateTree" class="ztree hide" data-toggle="ztree" data-options="{expandAll:true,checkEnable:true,chkStyle:'radio',radioType:'all',onClick:addCateTreeNodeClick,onCheck:addCateTreeNodeCheck}">
+                            <notempty name="cateData">
+                                <foreach name="cateData" item="vo" key="k">
+                                    <li data-id="{$vo.id}" data-pid="{$vo.pid}">{$vo.name}</li>
+                                </foreach>
+                            </notempty>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="content" class="control-label x85">内容：</label>
+                    </td>
+                    <td>
+                        <textarea name="content" id="content" style="width:800px;" data-toggle="kindeditor" data-minheight="200"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="status" class="control-label x85">状态：</label>
+                    </td>
+                    <td>
+                    <notempty name="commonStatus">
+                        <foreach name="commonStatus" item="vo" key="k">
+                            <input type="radio" name="status" data-toggle="icheck" value="{$k}" data-label="{$vo}" <if condition="$k eq 1">checked="checked"</if>>
+                            &nbsp;&nbsp;
+                        </foreach>
+                    </notempty>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="sort" class="control-label x85">排序：</label>
+                    </td>
+                    <td>
+                        <input type="text" name="sort" id="sort" value="0" size="20">
+                        <span>(*值越小越前)</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="submit" class="btn-default" data-icon="save">添加</button></li>
+    </ul>
+</div>
