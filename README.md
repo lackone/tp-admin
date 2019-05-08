@@ -28,8 +28,8 @@ return array(
 ### 4、配置虚拟主机, 指向当前项目目录
 ```
 <VirtualHost *:80>
-	DocumentRoot "D:\wwwroot\tp-admin"
-	ServerName tp-admin.me
+    DocumentRoot "D:\wwwroot\tp-admin"
+    ServerName tp-admin.me
 </VirtualHost>
 ```
 
