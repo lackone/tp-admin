@@ -12,8 +12,7 @@ git clone https://github.com/lackone/tp-admin.git
 将项目目录下的database.sql导入
 
 ### 3、配置数据库参数
-在App\Common\Conf\db.php
-
+在App\Common\Conf\db.php中
 ```
 return array(
     'DB_TYPE' => 'mysqli', // 数据库类型
@@ -27,6 +26,12 @@ return array(
 ```
 
 ### 4、配置虚拟主机, 指向当前项目目录
+```
+<VirtualHost *:80>
+	DocumentRoot "D:\wwwroot\tp-admin"
+	ServerName tp-admin.me
+</VirtualHost>
+```
 
 ### 5、通过 /admin 访问后台页面
 用户名：admin
